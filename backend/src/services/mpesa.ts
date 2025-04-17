@@ -55,7 +55,12 @@ export class MpesaService {
 
       throw new Error('Failed to get access token from Safaricom');
     } catch (error: any) {
-      console.error('Error getting access token:', error);
+      console.error('Error getting access token:', {
+        message: error.message,
+        response: error.response?.data,
+        config: error.config,
+        stack: error.stack
+      });
       throw new Error(error.message || 'Failed to get access token');
     }
   }
@@ -92,6 +97,19 @@ export class MpesaService {
     amount: number
   ): Promise<PaymentResponse> {
     try {
+      // Validate M-Pesa credentials
+      if (!config.MPESA_CONSUMER_KEY || !config.MPESA_CONSUMER_SECRET || 
+          !config.MPESA_SHORTCODE || !config.MPESA_PASSKEY || 
+          !config.MPESA_CALLBACK_URL) {
+        console.error('Missing M-Pesa credentials:', {
+          hasConsumerKey: !!config.MPESA_CONSUMER_KEY,
+          hasConsumerSecret: !!config.MPESA_CONSUMER_SECRET,
+          hasShortcode: !!config.MPESA_SHORTCODE,
+          hasPasskey: !!config.MPESA_PASSKEY,
+          hasCallbackUrl: !!config.MPESA_CALLBACK_URL
+        });
+        throw new Error('Missing M-Pesa credentials. Please check your environment variables.');
+      }
       // Format the phone number
       const formattedPhone = this.formatPhoneNumber(phoneNumber);
       
@@ -137,6 +155,12 @@ export class MpesaService {
       });
       
       console.log('Daraja API STK push response:', response.data);
+      
+      // Validate response data
+      if (!response.data.CheckoutRequestID || !response.data.MerchantRequestID) {
+        console.error('Invalid response from Daraja API:', response.data);
+        throw new Error('Invalid response from M-Pesa. Missing required fields.');
+      }
       
       return {
         success: true,

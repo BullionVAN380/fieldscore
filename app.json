@@ -6,7 +6,6 @@
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "newArchEnabled": true,
     "splash": {
       "image": "./assets/splashscreen.png",
       "resizeMode": "contain",
@@ -19,23 +18,10 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive.png",
         "backgroundColor": "#00FF00"
-      },
-      "package": "com.fieldscore"
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "326fe646-322e-4c17-8ed2-cf12b69c516c"
-      }
-    },
-    "owner": "josphat_mramba",
-    "runtimeVersion": {
-      "policy": "appVersion"
-    },
-    "updates": {
-      "url": "https://u.expo.dev/326fe646-322e-4c17-8ed2-cf12b69c516c"
     }
   }
 }

@@ -10,13 +10,25 @@ dotenv.config();
 const app = express();
 const port = parseInt(process.env.PORT || '3001', 10);
 
-// CORS configuration
+// CORS and security configuration
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://10.0.2.2:3000', 'http://localhost:19006', 'http://localhost:8083', 'http://127.0.0.1:8083'],
+  origin: ['http://localhost:8082', 'http://localhost:19006', `http://${process.env.LOCAL_IP || 'localhost'}:8082`],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
   credentials: true
 }));
+
+// Security headers
+app.use((req, res, next) => {
+  // Log incoming requests for debugging
+  console.log('Incoming request:', {
+    method: req.method,
+    url: req.url,
+    origin: req.headers.origin,
+    host: req.headers.host
+  });
+  next();
+});
 
 // Body parsing middleware - must come before logging to properly parse and log request bodies
 app.use(express.json());
@@ -40,29 +52,46 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 });
 
 // Health check endpoint
-app.get('/health', (req, res) => {
-  const mongoStatus = mongoose.connection.readyState;
-  res.json({
-    status: mongoStatus === 1 ? 'healthy' : 'unhealthy',
-    database: {
-      status: mongoStatus === 1 ? 'connected' : 'disconnected',
-      readyState: mongoStatus
-    },
-    env: {
-      mpesa: !!process.env.MPESA_CONSUMER_KEY,
-      mongodb: !!process.env.MONGODB_URI
-    }
-  });
+app.get('/api/health', (req, res) => {
+  try {
+    const mongoStatus = mongoose.connection.readyState;
+    const healthData = {
+      status: mongoStatus === 1 ? 'healthy' : 'unhealthy',
+      timestamp: new Date().toISOString(),
+      database: {
+        status: mongoStatus === 1 ? 'connected' : 'disconnected',
+        readyState: mongoStatus
+      },
+      env: {
+        mpesa: !!process.env.MPESA_CONSUMER_KEY,
+        mongodb: !!process.env.MONGODB_URI
+      }
+    };
+
+    res.setHeader('Content-Type', 'application/json');
+    res.json(healthData);
+  } catch (error) {
+    console.error('Health check error:', error);
+    res.status(500).json({
+      status: 'error',
+      message: 'Failed to check health status',
+      timestamp: new Date().toISOString()
+    });
+  }
 });
 
-// Routes
+// API Routes
 app.use('/api/farmers', farmerRoutes);
-// Health check endpoint
-
 app.use('/api/mpesa', mpesaRoutes);
 
-app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok' });
+// Log all unmatched routes
+app.use((req, res, next) => {
+  console.log('Unmatched route:', {
+    method: req.method,
+    url: req.url,
+    body: req.body
+  });
+  next();
 });
 
 const host = '0.0.0.0';
