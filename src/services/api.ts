@@ -2,10 +2,12 @@ import { FarmerDetails } from '../types';
 
 // API URL configuration for different environments
 const isWeb = typeof document !== 'undefined';
-const LOCAL_IP_ADDRESS = '192.168.3.100'; // Your computer's IP address from ipconfig
-
+const LOCAL_IP_ADDRESS = '192.168.3.100'; // Your computer's IP address from ipconfig  
 const getApiBaseUrl = () => {
-  const url = isWeb ? 'http://localhost:3001' : `http://${LOCAL_IP_ADDRESS}:3001`;
+  // For web, try to use the same hostname as the current page
+  const url = isWeb 
+    ? `http://${window.location.hostname}:3001`
+    : `http://${LOCAL_IP_ADDRESS}:3001`;
   console.log('API Base URL:', url);
   return url;
 };

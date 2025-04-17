@@ -12,10 +12,21 @@ const port = parseInt(process.env.PORT || '3001', 10);
 
 // CORS and security configuration
 app.use(cors({
-  origin: ['http://localhost:8082', 'http://localhost:19006', `http://${process.env.LOCAL_IP || 'localhost'}:8082`],
+  origin: [
+    'http://localhost:8081',
+    'http://localhost:8082',
+    'http://localhost:19006',
+    `http://${process.env.LOCAL_IP}:8081`,
+    `http://${process.env.LOCAL_IP}:8082`,
+    `http://${process.env.LOCAL_IP}:19006`,
+    'http://192.168.3.100:8081',
+    'http://192.168.3.100:8082',
+    'http://192.168.3.100:19006'
+  ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
-  credentials: true
+  credentials: true,
+  optionsSuccessStatus: 200
 }));
 
 // Security headers

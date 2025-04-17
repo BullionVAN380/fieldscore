@@ -1,5 +1,11 @@
 {
   "expo": {
+    "updates": {
+      "enabled": false
+    },
+    "extra": {
+      "apiUrl": "http://192.168.3.100:3001"
+    },
     "name": "fieldscore-daraja",
     "slug": "fieldscore-daraja",
     "version": "1.0.0",
