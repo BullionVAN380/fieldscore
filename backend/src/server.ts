@@ -19,9 +19,9 @@ app.use(cors({
     `http://${process.env.LOCAL_IP}:8081`,
     `http://${process.env.LOCAL_IP}:8082`,
     `http://${process.env.LOCAL_IP}:19006`,
-    'http://192.168.3.100:8081',
-    'http://192.168.3.100:8082',
-    'http://192.168.3.100:19006'
+    'http://192.168.0.119:8081',
+    'http://192.168.0.119:8082',
+    'http://192.168.0.119:19006'
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],

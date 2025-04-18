@@ -70,10 +70,11 @@ const styles = StyleSheet.create<Styles>({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#F5F5F5'
+    backgroundColor: '#F5F5F5',
   },
   content: {
-    flex: 1,
+    width: '100%',
+    maxWidth: 500,
     padding: 16,
   },
   title: {
@@ -101,7 +102,19 @@ const styles = StyleSheet.create<Styles>({
     marginBottom: 10
   },
   form: {
-    flex: 1,
+    width: '100%',
+    maxWidth: 400,
+    alignSelf: 'center',
+    backgroundColor: 'white',
+    borderRadius: 12,
+    padding: 24,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 8,
+    elevation: 2,
+    marginTop: 32,
+    marginBottom: 32,
   },
   label: {
     fontSize: 16,
@@ -443,7 +456,8 @@ const FarmerRegistrationForm: React.FC<FarmerRegistrationFormProps> = ({ onSubmi
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView style={styles.container}>
+      <ScrollView contentContainerStyle={{ flexGrow: 1, alignItems: 'center' }}>
+        <View style={styles.form}>
         <View style={styles.content}>
           <Text style={styles.title}>Farmer Registration</Text>
 
@@ -597,6 +611,7 @@ const FarmerRegistrationForm: React.FC<FarmerRegistrationFormProps> = ({ onSubmi
               )}
             </View>
           </TouchableOpacity>
+        </View>
         </View>
       </ScrollView>
     </SafeAreaView>
