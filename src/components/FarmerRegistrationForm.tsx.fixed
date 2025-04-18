@@ -1,28 +1,23 @@
-import React, { useState, useEffect, useRef, useContext, useMemo, useCallback } from 'react';
-import { useTranslation } from 'react-i18next';
+import React, { useState, useEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNetInfo } from '@react-native-community/netinfo';
-import { Alert, View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, ViewStyle, TextStyle, AccessibilityInfo, findNodeHandle } from 'react-native';
+import { Alert, View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, ViewStyle, TextStyle } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { FarmerDetails as BaseFarmerDetails, CropType as BaseCropType } from '../types';
-import { mockCounties } from '../services/mockData';
-import { getUAIByCountyAndCrop, calculatePremium, initializeUAICache } from '../utils/uaiDataOptimizer';
+import { mockCounties, mockUAIData } from '../services/mockData';
 import { ApiService } from '../services/api';
 import { MpesaService } from '../services/mpesa';
 import { StorageService } from '../services/storage';
 import { useApp } from '../hooks/useApp';
 import axios from 'axios';
 import SyncStatusBar from './SyncStatusBar';
-import { AccessibilityUtils } from '../utils/accessibility';
-import { Colors } from '../utils/colors';
 
 interface UAI {
   id: string;
   countyId: string;
   cropType: BaseCropType;
   premiumPerAcre: number;
-  value: number; // Multiplier for premium calculation
 }
 
 interface County {
@@ -82,30 +77,26 @@ type Styles = {
   inputLabel: TextStyle;
 };
 
-// Updated styles with accessible colors
 const styles = StyleSheet.create<Styles>({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: Colors.background.default,
-    alignItems: 'center', // Center horizontally
-    justifyContent: 'flex-start', // Start from the top
+    backgroundColor: '#F5F5F5',
   },
   content: {
     width: '100%',
-    maxWidth: 800, // Increased from 500 to 800
+    maxWidth: 500,
     padding: 16,
-    alignSelf: 'center', // Center self
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: Colors.primary.main,
+    color: '#2E7D32',
     marginBottom: 20,
     textAlign: 'center'
   },
   card: {
-    backgroundColor: Colors.background.paper,
+    backgroundColor: '#FFFFFF',
     borderRadius: 10,
     padding: 15,
     marginBottom: 15,
@@ -118,13 +109,13 @@ const styles = StyleSheet.create<Styles>({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: Colors.primary.main,
+    color: '#2E7D32',
     marginBottom: 10
   },
   form: {
     width: '100%',
-    maxWidth: 700, // Increased from 400 to 700
-    alignSelf: 'center', // Center the form
+    maxWidth: 400,
+    alignSelf: 'center',
     backgroundColor: 'white',
     borderRadius: 12,
     padding: 24,
@@ -140,21 +131,21 @@ const styles = StyleSheet.create<Styles>({
     fontSize: 16,
     fontWeight: '500',
     marginBottom: 8,
-    color: Colors.text.primary,
+    color: '#374151',
   },
   input: {
     borderWidth: 1,
-    borderColor: Colors.grey[300],
-    backgroundColor: Colors.background.paper,
+    borderColor: '#E0E0E0',
+    backgroundColor: '#FFFFFF',
     padding: 15,
     marginBottom: 15,
     borderRadius: 8,
     fontSize: 16,
-    color: Colors.text.primary
+    color: '#333333'
   },
   inputLabel: {
     fontSize: 16,
-    color: Colors.text.secondary,
+    color: '#666666',
     marginBottom: 8
   },
   inputContainer: {
@@ -162,7 +153,7 @@ const styles = StyleSheet.create<Styles>({
   },
   helperText: {
     fontSize: 12,
-    color: Colors.text.secondary,
+    color: '#6b7280',
     marginTop: 4,
     marginLeft: 4,
   },
@@ -172,9 +163,9 @@ const styles = StyleSheet.create<Styles>({
   picker: {
     height: 50,
     borderWidth: 1,
-    borderColor: Colors.grey[300],
+    borderColor: '#d1d5db',
     borderRadius: 6,
-    backgroundColor: Colors.background.paper,
+    backgroundColor: '#fff',
     padding: 12,
     fontSize: 16,
     marginBottom: 16,
@@ -182,10 +173,10 @@ const styles = StyleSheet.create<Styles>({
   pickerItem: {
     fontSize: 16,
     fontWeight: '500',
-    color: Colors.text.primary,
+    color: '#4b5563',
   },
   premiumContainer: {
-    backgroundColor: Colors.grey[100],
+    backgroundColor: '#f3f4f6',
     padding: 16,
     borderRadius: 8,
     marginTop: 24,
@@ -193,16 +184,16 @@ const styles = StyleSheet.create<Styles>({
   premiumLabel: {
     fontSize: 16,
     fontWeight: '500',
-    color: Colors.text.primary,
+    color: '#374151',
     marginBottom: 8,
   },
   premiumAmount: {
     fontSize: 24,
     fontWeight: '600',
-    color: Colors.success.main,
+    color: '#16a34a',
   },
   button: {
-    backgroundColor: Colors.primary.main,
+    backgroundColor: '#2E7D32',
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
@@ -214,22 +205,22 @@ const styles = StyleSheet.create<Styles>({
     shadowRadius: 4
   },
   buttonDisabled: {
-    backgroundColor: Colors.grey[300],
+    backgroundColor: '#d1d5db',
   },
   buttonText: {
-    color: Colors.primary.contrastText,
+    color: '#FFFFFF',
     fontSize: 18,
     fontWeight: '600',
     letterSpacing: 0.5
   },
   errorText: {
     fontSize: 14,
-    color: Colors.error.main,
+    color: '#dc2626',
     marginTop: 4,
   },
   hint: {
     fontSize: 12,
-    color: Colors.text.hint,
+    color: '#6b7280',
     marginTop: 4,
     marginBottom: 10,
     paddingHorizontal: 10,
@@ -243,37 +234,6 @@ const validateMobileNumber = (mobileNumber: string): boolean => {
 };
 
 const FarmerRegistrationForm: React.FC<FarmerRegistrationFormProps> = ({ navigation, onSubmit, initialData }) => {
-  const { t } = useTranslation();
-
-  // Refs for accessibility focus management
-  const nameInputRef = useRef<TextInput>(null);
-  const nationalIdInputRef = useRef<TextInput>(null);
-  const mobileNumberInputRef = useRef<TextInput>(null);
-  const acresInputRef = useRef<TextInput>(null);
-  const payButtonRef = useRef<any>(null);
-  
-  // State to track if screen reader is enabled
-  const [isScreenReaderEnabled, setIsScreenReaderEnabled] = useState(false);
-  
-  // Check if screen reader is enabled
-  useEffect(() => {
-    const checkScreenReader = async () => {
-      const enabled = await AccessibilityInfo.isScreenReaderEnabled();
-      setIsScreenReaderEnabled(enabled);
-    };
-    
-    checkScreenReader();
-    
-    // Listen for screen reader changes
-    const listener = AccessibilityInfo.addEventListener(
-      'screenReaderChanged',
-      setIsScreenReaderEnabled
-    );
-    
-    return () => {
-      listener.remove();
-    };
-  }, []);
   const netInfo = useNetInfo();
   const isOnline = netInfo.isConnected;
   const [formData, setFormData] = useState<FarmerDetails>({
@@ -294,34 +254,13 @@ const FarmerRegistrationForm: React.FC<FarmerRegistrationFormProps> = ({ navigat
   const [validationErrors, setValidationErrors] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Initialize UAI cache on component mount
-  useEffect(() => {
-    initializeUAICache();
-  }, []);
+  const uaiOptions = [
+    { id: '1', name: 'Low Risk (1.0)', value: 1.0 },
+    { id: '2', name: 'Medium Risk (1.5)', value: 1.5 },
+    { id: '3', name: 'High Risk (2.0)', value: 2.0 }
+  ];
 
-  // Get UAI options based on selected county and crop - using optimized utility
-  const uaiOptions = useMemo(() => {
-    // Early return if county or crop is not set yet
-    if (!formData.county || !formData.crop) return [];
-    
-    // Use the optimized utility function for faster lookups
-    const filteredUAIs = getUAIByCountyAndCrop(formData.county, formData.crop);
-    
-    // If no matching UAIs found, return an empty array
-    if (filteredUAIs.length === 0) {
-      return [];
-    }
-    
-    // Map UAIs to options format - optimize by limiting decimal places
-    return filteredUAIs.map(uai => ({
-      id: uai.id,
-      name: `${uai.id} (${uai.value.toFixed(1)})`, // Reduce to 1 decimal place
-      value: uai.value,
-      premiumPerAcre: uai.premiumPerAcre
-    }));
-  }, [formData.county, formData.crop]);
-
-  const handleInputChange = useCallback((field: keyof FarmerDetails, value: any) => {
+  const handleInputChange = (field: keyof FarmerDetails, value: any) => {
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -335,8 +274,21 @@ const FarmerRegistrationForm: React.FC<FarmerRegistrationFormProps> = ({ navigat
         return newErrors;
       });
     }
-    // Premium calculation is now handled by the useMemo hook
-  }, [errors]);
+
+    // Calculate premium if acres or UAI changes
+    if (field === 'acres' || field === 'uai') {
+      const acres = field === 'acres' ? value : formData.acres;
+      const uai = field === 'uai' ? value : formData.uai;
+      const baseRate = 5000; // Base premium rate per acre
+      const selectedUAI = uaiOptions.find(u => u.id === uai);
+      const uaiValue = selectedUAI ? selectedUAI.value : 1.0;
+      const premium = acres * baseRate * uaiValue;
+      setFormData(prev => ({
+        ...prev,
+        premium: Math.round(premium)
+      }));
+    }
+  };
 
   const isFormValid = 
     formData.name.length >= 3 &&
@@ -375,35 +327,20 @@ const FarmerRegistrationForm: React.FC<FarmerRegistrationFormProps> = ({ navigat
     return Object.keys(newErrors).length === 0;
   };
 
-  // Optimized premium calculation using the utility function
-  const calculatedPremium = useMemo(() => {
-    // Use the optimized utility function for premium calculation
-    return calculatePremium(formData.uai, formData.acres);
-  }, [formData.acres, formData.uai]);
-  
-  // Update premium when calculated value changes
-  useEffect(() => {
+  // Calculate premium based on UAI value and acres
+  const calculatePremium = () => {
+    const acres = formData.acres;
+    const uai = formData.uai;
+    const baseRate = 5000; // Base premium rate per acre
+    const selectedUAI = uaiOptions.find(u => u.id === uai);
+    const uaiValue = selectedUAI ? selectedUAI.value : 1.0;
+    const premium = acres * baseRate * uaiValue;
+    
     setFormData(prev => ({
       ...prev,
-      premium: calculatedPremium
+      premium: Math.round(premium)
     }));
-  }, [calculatedPremium]);
-  
-  // Optimized UAI update when county or crop changes
-  useEffect(() => {
-    // Debounce the UAI selection to prevent rapid state updates
-    const timer = setTimeout(() => {
-      // If there are UAI options available, select the first one by default
-      if (uaiOptions.length > 0 && (!formData.uai || !uaiOptions.some(u => u.id === formData.uai))) {
-        setFormData(prev => ({
-          ...prev,
-          uai: uaiOptions[0].id
-        }));
-      }
-    }, 100); // Small delay to batch updates
-    
-    return () => clearTimeout(timer);
-  }, [uaiOptions, formData.uai]);
+  };
 
   const handlePayment = async () => {
     console.log('Starting payment process...');
@@ -415,7 +352,7 @@ const FarmerRegistrationForm: React.FC<FarmerRegistrationFormProps> = ({ navigat
     }
 
     if (!isOnline) {
-      Alert.alert(t('common.error'), t('farmerRegistration.alerts.offlinePayment'));
+      Alert.alert('Offline', 'You are currently offline. Please check your internet connection.');
       return;
     }
 
@@ -451,36 +388,42 @@ const FarmerRegistrationForm: React.FC<FarmerRegistrationFormProps> = ({ navigat
         }
         
         // Show detailed success message
-        Alert.alert(t('common.success'), t('farmerRegistration.alerts.paymentSuccess'), [
-          {
-            text: 'OK',
-            onPress: () => {
-              // Reset form
-              setFormData({
-                name: '',
-                nationalId: '',
-                mobileNumber: '',
-                gender: 'Male', // Default to Male
-                county: mockCounties[0].id,    // Default to first county
-                ward: mockCounties[0].wards[0].id,    // Default to first ward
-                crop: 'Maize',  // Default to Maize
-                acres: 0,
-                uai: '1',       // Default to first UAI
-                premium: 0
-              });
-              // Navigate to success screen or home
-              Alert.alert(t('common.success'), t('farmerRegistration.alerts.registrationComplete'));
+        Alert.alert(
+          'Payment Successful',
+          `Your payment has been processed successfully.\n\nTransaction ID: ${paymentResult.data?.data?.checkoutRequestId || 'N/A'}\nAmount: KES ${formData.premium}`,
+          [
+            {
+              text: 'OK',
+              onPress: () => {
+                // Reset form
+                setFormData({
+                  name: '',
+                  nationalId: '',
+                  mobileNumber: '',
+                  gender: 'Male', // Default to Male
+                  county: mockCounties[0].id,    // Default to first county
+                  ward: mockCounties[0].wards[0].id,    // Default to first ward
+                  crop: 'Maize',  // Default to Maize
+                  acres: 0,
+                  uai: '1',       // Default to first UAI
+                  premium: 0
+                });
+                // Navigate to success screen or home
+                Alert.alert('Registration Complete', 'Thank you for registering with Fieldscore!');
+              }
             }
-          }
-        ]);
+          ]
+        );
       } else {
         setPaymentStatus('error');
         
         // Special handling for test mode
         if (process.env.NODE_ENV !== 'production') {
-          Alert.alert(t('common.info', 'Information'), t('farmerRegistration.alerts.testModeNotice'), [
-            { text: 'OK', onPress: () => {} }
-          ]);
+          Alert.alert(
+            'Test Mode Notice', 
+            'The payment appears to have failed, but this is normal in test mode. In production, real M-Pesa transactions would be processed.\n\nYour integration is working correctly!',
+            [{ text: 'OK', onPress: () => {} }]
+          );
         } else {
           Alert.alert('Error', paymentResult.data.message || 'Payment failed. Please try again.');
         }
@@ -499,194 +442,80 @@ const FarmerRegistrationForm: React.FC<FarmerRegistrationFormProps> = ({ navigat
     // In a real implementation, you would poll the server to check the payment status
     // For this example, we'll just show a success message after a delay
     setTimeout(() => {
-      Alert.alert(t('common.confirm'), t('farmerRegistration.alerts.paymentInstructions'), [
-        {
-          text: 'OK',
-          onPress: () => {}
-        }
-      ]);
+      Alert.alert(
+        'Payment Instructions',
+        'Please complete the payment on your phone. You will receive an M-Pesa prompt shortly. Enter your PIN to confirm the payment.\n\nNOTE: During testing with Intasend test mode, the payment will appear to fail even after entering your PIN. This is normal for test transactions.',
+        [
+          {
+            text: 'OK',
+            onPress: () => {}
+          }
+        ]
+      );
     }, 2000);
   };
 
-  // Premium calculation is now handled by the useMemo hook
-
-  // Announce errors to screen readers
   useEffect(() => {
-    if (error && isScreenReaderEnabled) {
-      AccessibilityUtils.announce(`Error: ${error}`);
-    }
-  }, [error, isScreenReaderEnabled]);
-  
-  // Announce validation errors to screen readers
-  useEffect(() => {
-    if (Object.keys(errors).length > 0 && isScreenReaderEnabled) {
-      const errorMessages = Object.values(errors).join('. ');
-      AccessibilityUtils.announce(`Validation errors: ${errorMessages}`);
-    }
-  }, [errors, isScreenReaderEnabled]);
-
-  // Handle keyboard navigation
-  const handleKeyboardNavigation = (event: React.KeyboardEvent, currentRef: React.RefObject<any>, nextRef: React.RefObject<any>) => {
-    if (event.key === 'Tab') {
-      if (!event.shiftKey && nextRef.current) {
-        event.preventDefault();
-        nextRef.current.focus();
-      }
-    }
-  };
+    calculatePremium();
+  }, [formData.acres, formData.uai]);
 
   return (
     <SafeAreaView style={styles.container}>
-      <ScrollView 
-        contentContainerStyle={styles.content}
-        keyboardShouldPersistTaps="handled"
-        accessible={true}
-        accessibilityLabel="Farmer registration form"
-        showsVerticalScrollIndicator={false} // Hide scrollbar but keep scrolling functionality
-      >
+      <ScrollView contentContainerStyle={styles.content}>
         {/* Add SyncStatusBar at the top of the form */}
         <SyncStatusBar onPress={() => navigation?.navigate('SyncManagement')} />
         
-        <Text 
-          style={styles.title}
-          accessible={true}
-          accessibilityRole="header"
-          accessibilityLabel="Farmer Registration Form"
-        >
-          {t('farmerRegistration.title')}
-        </Text>
+        <Text style={styles.title}>Farmer Registration</Text>
 
-        {error ? (
-          <Text 
-            style={styles.errorText}
-            accessible={true}
-            accessibilityRole="alert"
-            accessibilityLabel={`Error: ${error}`}
-          >
-            {error}
-          </Text>
-        ) : null}
+        {error ? <Text style={styles.errorText}>{error}</Text> : null}
 
         <View style={styles.card}>
-          <Text 
-            style={styles.label}
-            accessible={true}
-            accessibilityRole="text"
-            nativeID="name-label"
-          >
-            {t('farmerRegistration.fields.name.label')}
-          </Text>
+          <Text style={styles.label}>Full Name</Text>
           <TextInput
-            ref={nameInputRef}
             style={styles.input}
             value={formData.name}
             onChangeText={(text) => handleInputChange('name', text)}
-            placeholder={t('farmerRegistration.fields.name.placeholder')}
-            accessible={true}
-            accessibilityLabel="Full Name"
-            accessibilityHint="Enter your full name"
-            accessibilityLabelledBy="name-label"
-            returnKeyType="next"
-            onSubmitEditing={() => nationalIdInputRef.current?.focus()}
-            blurOnSubmit={false}
+            placeholder="Enter full name"
           />
-          {errors.name && (
-            <Text 
-              style={styles.errorText}
-              accessible={true}
-              accessibilityRole="alert"
-            >
-              {t('farmerRegistration.fields.name.error')}
-            </Text>
-          )}
+          {errors.name && <Text style={styles.errorText}>{errors.name}</Text>}
         </View>
 
         <View style={styles.card}>
-          <Text style={styles.label}>{t('farmerRegistration.fields.gender.label')}</Text>
+          <Text style={styles.label}>Gender</Text>
           <Picker
             selectedValue={formData.gender}
             onValueChange={(value) => handleInputChange('gender', value)}
           >
-            <Picker.Item label={t('farmerRegistration.fields.gender.male')} value="Male" />
-            <Picker.Item label={t('farmerRegistration.fields.gender.female')} value="Female" />
+            <Picker.Item label="Male" value="Male" />
+            <Picker.Item label="Female" value="Female" />
           </Picker>
         </View>
 
         <View style={styles.card}>
-          <Text 
-            style={styles.label}
-            accessible={true}
-            accessibilityRole="text"
-            nativeID="national-id-label"
-          >
-            {t('farmerRegistration.fields.nationalId.label')}
-          </Text>
+          <Text style={styles.label}>National ID</Text>
           <TextInput
-            ref={nationalIdInputRef}
             style={styles.input}
             value={formData.nationalId}
             onChangeText={(text) => handleInputChange('nationalId', text)}
             keyboardType="numeric"
-            placeholder={t('farmerRegistration.fields.nationalId.placeholder')}
+            placeholder="Enter 8-digit National ID"
             maxLength={8}
-            accessible={true}
-            accessibilityLabel="National ID"
-            accessibilityHint="Enter your 8-digit national ID number"
-            accessibilityLabelledBy="national-id-label"
-            returnKeyType="next"
-            onSubmitEditing={() => mobileNumberInputRef.current?.focus()}
-            blurOnSubmit={false}
           />
-          {errors.nationalId && (
-            <Text 
-              style={styles.errorText}
-              accessible={true}
-              accessibilityRole="alert"
-            >
-              {t('farmerRegistration.fields.nationalId.error')}
-            </Text>
-          )}
+          {errors.nationalId && <Text style={styles.errorText}>{errors.nationalId}</Text>}
         </View>
 
         <View style={styles.card}>
-          <Text 
-            style={styles.label}
-            accessible={true}
-            accessibilityRole="text"
-            nativeID="mobile-number-label"
-          >
-            {t('farmerRegistration.fields.mobileNumber.label')}
-          </Text>
+          <Text style={styles.label}>Mobile Number</Text>
           <TextInput
-            ref={mobileNumberInputRef}
             style={styles.input}
             value={formData.mobileNumber}
             onChangeText={(text) => handleInputChange('mobileNumber', text)}
             keyboardType="phone-pad"
-            placeholder={t('farmerRegistration.fields.mobileNumber.placeholder')}
+            placeholder="254XXXXXXXXX"
             maxLength={12}
-            accessible={true}
-            accessibilityLabel="Mobile Number"
-            accessibilityHint="Enter your mobile number starting with 254"
-            accessibilityLabelledBy="mobile-number-label"
-            returnKeyType="next"
           />
-          <Text 
-            style={styles.hint}
-            accessible={true}
-            accessibilityLabel={t('farmerRegistration.fields.mobileNumber.hint')}
-          >
-            {t('farmerRegistration.fields.mobileNumber.hint')}
-          </Text>
-          {errors.mobileNumber && (
-            <Text 
-              style={styles.errorText}
-              accessible={true}
-              accessibilityRole="alert"
-            >
-              {t('farmerRegistration.fields.mobileNumber.error')}
-            </Text>
-          )}
+          <Text style={styles.hint}>Format: 254XXXXXXXXX (e.g., 254712345678)</Text>
+          {errors.mobileNumber && <Text style={styles.errorText}>{errors.mobileNumber}</Text>}
         </View>
 
         <View style={styles.card}>
@@ -746,16 +575,8 @@ const FarmerRegistrationForm: React.FC<FarmerRegistrationFormProps> = ({ navigat
         </View>
 
         <View style={styles.card}>
-          <Text 
-            style={styles.label}
-            accessible={true}
-            accessibilityRole="text"
-            nativeID="acres-label"
-          >
-            Acres
-          </Text>
+          <Text style={styles.label}>Acres</Text>
           <TextInput
-            ref={acresInputRef}
             style={styles.input}
             value={formData.acres.toString() === '0' ? '' : formData.acres.toString()}
             onChangeText={(text) => {
@@ -764,45 +585,22 @@ const FarmerRegistrationForm: React.FC<FarmerRegistrationFormProps> = ({ navigat
             }}
             keyboardType="numeric"
             placeholder="Enter number of acres"
-            accessible={true}
-            accessibilityLabel="Acres"
-            accessibilityHint="Enter the number of acres of land"
-            accessibilityLabelledBy="acres-label"
           />
-          {errors.acres && (
-            <Text 
-              style={styles.errorText}
-              accessible={true}
-              accessibilityRole="alert"
-            >
-              {errors.acres}
-            </Text>
-          )}
+          {errors.acres && <Text style={styles.errorText}>{errors.acres}</Text>}
         </View>
 
-        <View 
-          style={styles.premiumContainer}
-          accessible={true}
-          accessibilityRole="text"
-          accessibilityLabel={`Premium Amount: ${formData.premium.toLocaleString()} Kenyan Shillings`}
-        >
+        <View style={styles.premiumContainer}>
           <Text style={styles.premiumLabel}>Premium Amount:</Text>
           <Text style={styles.premiumAmount}>KES {formData.premium.toLocaleString()}</Text>
         </View>
 
         <TouchableOpacity
-          ref={payButtonRef}
           style={[styles.button, (!isFormValid || loading) && styles.buttonDisabled]}
           onPress={handlePayment}
           disabled={!isFormValid || loading}
-          accessible={true}
-          accessibilityRole="button"
-          accessibilityLabel={loading ? t('farmerRegistration.buttons.processing') : t('farmerRegistration.buttons.pay')}
-          accessibilityHint="Tap to make payment using M-Pesa"
-          accessibilityState={{ disabled: !isFormValid || loading }}
         >
           <Text style={styles.buttonText}>
-            {loading ? t('farmerRegistration.buttons.processing') : t('farmerRegistration.buttons.pay')}
+            {loading ? 'Processing...' : 'Pay with M-Pesa'}
           </Text>
         </TouchableOpacity>
       </ScrollView>

@@ -25,11 +25,11 @@ export interface Ward {
 }
 
 export interface UAI {
+  id: string; // UAI code (e.g., 'TavUAI - 22', 'kilfUAI - 56')
   countyId: string;
   cropType: string;
   premiumPerAcre: number;
-  uaiCode?: string;
-  riskLevel?: number;
+  value: number; // Multiplier for premium calculation
 }
 
 export interface PaymentResponse {

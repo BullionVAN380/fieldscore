@@ -1,16 +1,5 @@
-import { useState, useEffect } from 'react';
-import NetInfo from '@react-native-community/netinfo';
+import { useContext } from 'react';
+import { AppContext } from '../context/AppContext';
 
-export const useApp = () => {
-  const [isOnline, setIsOnline] = useState(true);
-
-  useEffect(() => {
-    const unsubscribe = NetInfo.addEventListener(state => {
-      setIsOnline(state.isConnected ?? true);
-    });
-
-    return () => unsubscribe();
-  }, []);
-
-  return { isOnline };
-};
+// Re-export the hook from the context
+export const useApp = () => useContext(AppContext);

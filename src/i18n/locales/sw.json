@@ -1,0 +1,144 @@
+{
+  "common": {
+    "loading": "Inapakia...",
+    "error": "Hitilafu",
+    "success": "Imefaulu",
+    "cancel": "Ghairi",
+    "save": "Hifadhi",
+    "delete": "Futa",
+    "edit": "Hariri",
+    "close": "Funga",
+    "confirm": "Thibitisha",
+    "yes": "Ndio",
+    "no": "Hapana",
+    "ok": "Sawa",
+    "back": "Rudi Nyuma",
+    "next": "Endelea",
+    "submit": "Wasilisha",
+    "retry": "Jaribu Tena",
+    "clear": "Futa",
+    "search": "Tafuta",
+    "filter": "Chuja",
+    "all": "Zote",
+    "offline": "Nje ya Mtandao",
+    "online": "Mtandaoni"
+  },
+  "navigation": {
+    "farmerRegistration": "Usajili wa Mkulima",
+    "syncManagement": "Usimamizi wa Sawazisha"
+  },
+  "farmerRegistration": {
+    "title": "Usajili wa Mkulima",
+    "personalInfo": "Taarifa za Kibinafsi",
+    "farmInfo": "Taarifa za Shamba",
+    "paymentInfo": "Taarifa za Malipo",
+    "fields": {
+      "name": {
+        "label": "Jina Kamili",
+        "placeholder": "Ingiza jina kamili",
+        "error": "Jina lazima liwe na angalau herufi 3"
+      },
+      "gender": {
+        "label": "Jinsia",
+        "male": "Mume",
+        "female": "Mke"
+      },
+      "nationalId": {
+        "label": "Kitambulisho cha Taifa",
+        "placeholder": "Ingiza nambari ya kitambulisho yenye tarakimu 8",
+        "error": "Kitambulisho cha taifa lazima kiwe na tarakimu 8"
+      },
+      "mobileNumber": {
+        "label": "Nambari ya Simu",
+        "placeholder": "254XXXXXXXXX",
+        "hint": "Muundo: 254XXXXXXXXX (mfano, 254712345678)",
+        "error": "Nambari ya simu lazima ianze na 254 ikifuatiwa na tarakimu 9"
+      },
+      "county": {
+        "label": "Kaunti"
+      },
+      "ward": {
+        "label": "Wadi"
+      },
+      "crop": {
+        "label": "Aina ya Mazao",
+        "maize": "Mahindi",
+        "beans": "Maharagwe",
+        "sorghum": "Mtama",
+        "greenGrams": "Choroko",
+        "cowpeas": "Kunde",
+        "millet": "Uwele"
+      },
+      "uai": {
+        "label": "UAI (Kitengo cha Eneo la Bima)",
+        "lowRisk": "Hatari Ndogo (1.0)",
+        "mediumRisk": "Hatari ya Wastani (1.5)",
+        "highRisk": "Hatari Kubwa (2.0)"
+      },
+      "acres": {
+        "label": "Ekari",
+        "placeholder": "Ingiza idadi ya ekari",
+        "error": "Ekari lazima ziwe zaidi ya 0"
+      },
+      "premium": {
+        "label": "Kiasi cha Bima"
+      }
+    },
+    "buttons": {
+      "pay": "Lipa na M-Pesa",
+      "processing": "Inachakata..."
+    },
+    "alerts": {
+      "offlinePayment": "Uko nje ya mtandao. Tafadhali angalia muunganisho wako wa mtandao.",
+      "paymentSuccess": "Malipo yako yamechakatwa kwa mafanikio.",
+      "paymentInstructions": "Tafadhali kamilisha malipo kwenye simu yako. Utapokea arifa ya M-Pesa hivi karibuni. Ingiza PIN yako kuthibitisha malipo.",
+      "testModeNotice": "Malipo yanaonekana yameshindwa, lakini hii ni kawaida katika hali ya majaribio. Katika uzalishaji, miamala halisi ya M-Pesa itachakatwa.\n\nUunganishaji wako unafanya kazi vizuri!",
+      "registrationComplete": "Asante kwa kusajili na Fieldscore!"
+    }
+  },
+  "sync": {
+    "title": "Usimamizi wa Sawazisha",
+    "status": {
+      "pending": "Inasubiri",
+      "processing": "Inachakata",
+      "success": "Imefaulu",
+      "failed": "Imeshindwa",
+      "lastSync": "Sawazisha ya mwisho",
+      "lastSyncAttempt": "Jaribio la mwisho la kusawazisha",
+      "lastSuccessfulSync": "Sawazisha ya mwisho iliyofaulu",
+      "never": "Kamwe",
+      "total": "Jumla",
+      "pendingItems": "Kipengee {{count}} kinasubiri",
+      "pendingItems_plural": "Vipengee {{count}} vinasubiri",
+      "allSynced": "Data zote zimesawazishwa"
+    },
+    "actions": {
+      "syncNow": "Sawazisha Sasa",
+      "retryFailed": "Jaribu Tena Zilizoshindwa",
+      "clearFailed": "Futa Zilizoshindwa"
+    },
+    "alerts": {
+      "syncComplete": "Data yako imesawazishwa kwa mafanikio na seva.",
+      "syncFailed": "Baadhi ya vipengee vilishindwa kusawazishwa. Tafadhali jaribu tena baadaye.",
+      "syncError": "Hitilafu imetokea wakati wa kujaribu kusawazisha data yako.",
+      "clearConfirmation": "Una uhakika unataka kufuta vipengee vyote vilivyoshindwa? Kitendo hiki hakiwezi kutenduliwa.",
+      "cleared": "Vipengee vilivyoshindwa vimefutwa kutoka kwa foleni."
+    },
+    "emptyState": "Hakuna vipengee vya kusawazisha vya kuonyesha",
+    "clearFilter": "Futa kichujio"
+  },
+  "dateTime": {
+    "today": "Leo",
+    "yesterday": "Jana",
+    "daysAgo": "Siku {{count}} iliyopita",
+    "daysAgo_plural": "Siku {{count}} zilizopita",
+    "justNow": "Sasa hivi",
+    "minutesAgo": "Dakika {{count}} iliyopita",
+    "minutesAgo_plural": "Dakika {{count}} zilizopita",
+    "hoursAgo": "Saa {{count}} iliyopita",
+    "hoursAgo_plural": "Saa {{count}} zilizopita"
+  },
+  "currency": {
+    "kes": "KES {{amount}}"
+  }
+}

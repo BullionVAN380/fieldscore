@@ -1,0 +1,144 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "edit": "Edit",
+    "close": "Close",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No",
+    "ok": "OK",
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit",
+    "retry": "Retry",
+    "clear": "Clear",
+    "search": "Search",
+    "filter": "Filter",
+    "all": "All",
+    "offline": "Offline",
+    "online": "Online"
+  },
+  "navigation": {
+    "farmerRegistration": "Farmer Registration",
+    "syncManagement": "Sync Management"
+  },
+  "farmerRegistration": {
+    "title": "Farmer Registration",
+    "personalInfo": "Personal Information",
+    "farmInfo": "Farm Information",
+    "paymentInfo": "Payment Information",
+    "fields": {
+      "name": {
+        "label": "Full Name",
+        "placeholder": "Enter full name",
+        "error": "Name must be at least 3 characters"
+      },
+      "gender": {
+        "label": "Gender",
+        "male": "Male",
+        "female": "Female"
+      },
+      "nationalId": {
+        "label": "National ID",
+        "placeholder": "Enter 8-digit National ID",
+        "error": "National ID must be 8 digits"
+      },
+      "mobileNumber": {
+        "label": "Mobile Number",
+        "placeholder": "254XXXXXXXXX",
+        "hint": "Format: 254XXXXXXXXX (e.g., 254712345678)",
+        "error": "Mobile number must start with 254 followed by 9 digits"
+      },
+      "county": {
+        "label": "County"
+      },
+      "ward": {
+        "label": "Ward"
+      },
+      "crop": {
+        "label": "Crop Type",
+        "maize": "Maize",
+        "beans": "Beans",
+        "sorghum": "Sorghum",
+        "greenGrams": "Green grams",
+        "cowpeas": "Cowpeas",
+        "millet": "Millet"
+      },
+      "uai": {
+        "label": "UAI (Unit Area of Insurance)",
+        "lowRisk": "Low Risk (1.0)",
+        "mediumRisk": "Medium Risk (1.5)",
+        "highRisk": "High Risk (2.0)"
+      },
+      "acres": {
+        "label": "Acres",
+        "placeholder": "Enter number of acres",
+        "error": "Acres must be greater than 0"
+      },
+      "premium": {
+        "label": "Premium Amount"
+      }
+    },
+    "buttons": {
+      "pay": "Pay with M-Pesa",
+      "processing": "Processing..."
+    },
+    "alerts": {
+      "offlinePayment": "You are currently offline. Please check your internet connection.",
+      "paymentSuccess": "Your payment has been processed successfully.",
+      "paymentInstructions": "Please complete the payment on your phone. You will receive an M-Pesa prompt shortly. Enter your PIN to confirm the payment.",
+      "testModeNotice": "The payment appears to have failed, but this is normal in test mode. In production, real M-Pesa transactions would be processed.\n\nYour integration is working correctly!",
+      "registrationComplete": "Thank you for registering with Fieldscore!"
+    }
+  },
+  "sync": {
+    "title": "Sync Management",
+    "status": {
+      "pending": "Pending",
+      "processing": "Processing",
+      "success": "Success",
+      "failed": "Failed",
+      "lastSync": "Last sync",
+      "lastSyncAttempt": "Last sync attempt",
+      "lastSuccessfulSync": "Last successful sync",
+      "never": "Never",
+      "total": "Total",
+      "pendingItems": "{{count}} item pending",
+      "pendingItems_plural": "{{count}} items pending",
+      "allSynced": "All data synced"
+    },
+    "actions": {
+      "syncNow": "Sync Now",
+      "retryFailed": "Retry Failed",
+      "clearFailed": "Clear Failed"
+    },
+    "alerts": {
+      "syncComplete": "Your data has been successfully synchronized with the server.",
+      "syncFailed": "Some items failed to sync. Please try again later.",
+      "syncError": "An error occurred while trying to sync your data.",
+      "clearConfirmation": "Are you sure you want to clear all failed items? This action cannot be undone.",
+      "cleared": "Failed items have been cleared from the queue."
+    },
+    "emptyState": "No sync items to display",
+    "clearFilter": "Clear filter"
+  },
+  "dateTime": {
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "daysAgo": "{{count}} day ago",
+    "daysAgo_plural": "{{count}} days ago",
+    "justNow": "Just now",
+    "minutesAgo": "{{count}} minute ago",
+    "minutesAgo_plural": "{{count}} minutes ago",
+    "hoursAgo": "{{count}} hour ago",
+    "hoursAgo_plural": "{{count}} hours ago"
+  },
+  "currency": {
+    "kes": "KES {{amount}}"
+  }
+}
