@@ -87,7 +87,7 @@ const styles = StyleSheet.create<Styles>({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: Colors.background.default,
+    backgroundColor: Colors.background,
     alignItems: 'center', // Center horizontally
     justifyContent: 'flex-start', // Start from the top
   },
@@ -100,12 +100,12 @@ const styles = StyleSheet.create<Styles>({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: Colors.primary.main,
+    color: Colors.primary,
     marginBottom: 20,
     textAlign: 'center'
   },
   card: {
-    backgroundColor: Colors.background.paper,
+    backgroundColor: Colors.paper,
     borderRadius: 10,
     padding: 15,
     marginBottom: 15,
@@ -118,7 +118,7 @@ const styles = StyleSheet.create<Styles>({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: Colors.primary.main,
+    color: Colors.primary,
     marginBottom: 10
   },
   form: {
@@ -140,21 +140,21 @@ const styles = StyleSheet.create<Styles>({
     fontSize: 16,
     fontWeight: '500',
     marginBottom: 8,
-    color: Colors.text.primary,
+    color: Colors.text,
   },
   input: {
     borderWidth: 1,
     borderColor: Colors.grey[300],
-    backgroundColor: Colors.background.paper,
+    backgroundColor: Colors.paper,
     padding: 15,
     marginBottom: 15,
     borderRadius: 8,
     fontSize: 16,
-    color: Colors.text.primary
+    color: Colors.text,
   },
   inputLabel: {
     fontSize: 16,
-    color: Colors.text.secondary,
+    color: Colors.textLight,
     marginBottom: 8
   },
   inputContainer: {
@@ -162,7 +162,7 @@ const styles = StyleSheet.create<Styles>({
   },
   helperText: {
     fontSize: 12,
-    color: Colors.text.secondary,
+    color: Colors.textLight,
     marginTop: 4,
     marginLeft: 4,
   },
@@ -174,7 +174,7 @@ const styles = StyleSheet.create<Styles>({
     borderWidth: 1,
     borderColor: Colors.grey[300],
     borderRadius: 6,
-    backgroundColor: Colors.background.paper,
+    backgroundColor: Colors.paper,
     padding: 12,
     fontSize: 16,
     marginBottom: 16,
@@ -182,7 +182,7 @@ const styles = StyleSheet.create<Styles>({
   pickerItem: {
     fontSize: 16,
     fontWeight: '500',
-    color: Colors.text.primary,
+    color: Colors.text,
   },
   premiumContainer: {
     backgroundColor: Colors.grey[100],
@@ -193,16 +193,16 @@ const styles = StyleSheet.create<Styles>({
   premiumLabel: {
     fontSize: 16,
     fontWeight: '500',
-    color: Colors.text.primary,
+    color: Colors.text,
     marginBottom: 8,
   },
   premiumAmount: {
     fontSize: 24,
     fontWeight: '600',
-    color: Colors.success.main,
+    color: Colors.status.success,
   },
   button: {
-    backgroundColor: Colors.primary.main,
+    backgroundColor: Colors.primary,
     padding: 15,
     borderRadius: 8,
     alignItems: 'center',
@@ -217,19 +217,19 @@ const styles = StyleSheet.create<Styles>({
     backgroundColor: Colors.grey[300],
   },
   buttonText: {
-    color: Colors.primary.contrastText,
+    color: Colors.white,
     fontSize: 18,
     fontWeight: '600',
     letterSpacing: 0.5
   },
   errorText: {
     fontSize: 14,
-    color: Colors.error.main,
+    color: Colors.status.error,
     marginTop: 4,
   },
   hint: {
     fontSize: 12,
-    color: Colors.text.hint,
+    color: Colors.hint,
     marginTop: 4,
     marginBottom: 10,
     paddingHorizontal: 10,
@@ -433,9 +433,22 @@ const FarmerRegistrationForm: React.FC<FarmerRegistrationFormProps> = ({ navigat
         throw new Error('Mobile number is required');
       }
       
+      // Send all farmer details along with payment information
+      // This ensures new farmers are saved to the database even if they don't exist yet
       const paymentResult = await ApiService.post('/mpesa/stk-push', {
+        // Payment details
         phoneNumber: formData.mobileNumber,
-        amount: formData.premium
+        amount: formData.premium,
+        
+        // Farmer details - these will be used to create a new farmer if the National ID doesn't exist
+        nationalId: formData.nationalId,
+        name: formData.name,
+        gender: formData.gender,
+        county: formData.county,
+        ward: formData.ward,
+        crop: formData.crop,
+        acres: formData.acres,
+        uai: formData.uai
       });
       
       console.log('Payment result:', paymentResult.data);

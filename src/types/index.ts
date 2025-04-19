@@ -1,6 +1,7 @@
 export type CropType = 'Maize' | 'Beans' | 'Sorghum' | 'Green grams' | 'Cowpeas' | 'Millet';
 
 export interface FarmerDetails {
+  id?: string; // Optional for new farmers, required for existing ones
   name: string;
   gender: 'Male' | 'Female';
   nationalId: string;

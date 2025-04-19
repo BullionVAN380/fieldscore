@@ -6,7 +6,7 @@
       "checkAutomatically": "ON_ERROR_RECOVERY"
     },
     "extra": {
-      "apiUrl": "http://192.168.3.100:3001",
+      "apiUrl": "http://192.168.0.119:3001",
       "enablePerformanceOptimizations": true,
       "enableOfflineMode": true
     },
@@ -15,8 +15,8 @@
       "assets/*",
       "src/i18n/translations/*"
     ],
-    "name": "fieldscore-daraja",
-    "slug": "fieldscore-daraja",
+    "name": "fieldscore-insurance",
+    "slug": "fieldscore-insurance",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",

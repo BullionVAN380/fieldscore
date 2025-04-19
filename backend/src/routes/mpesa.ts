@@ -11,7 +11,19 @@ router.post('/stk-push', async (req: Request, res: Response) => {
     console.log('Received M-Pesa STK push request');
     console.log('Request body:', req.body);
 
-    const { phoneNumber, amount, farmerId } = req.body;
+    const { 
+      phoneNumber, 
+      amount, 
+      farmerId, 
+      nationalId, 
+      name, 
+      gender, 
+      county, 
+      ward, 
+      crop, 
+      acres, 
+      uai 
+    } = req.body;
 
     if (!phoneNumber || !amount) {
       console.log('Validation failed: Missing phone number or amount');
@@ -30,8 +42,40 @@ router.post('/stk-push', async (req: Request, res: Response) => {
     console.log('Daraja M-Pesa STK push result:', result);
 
     if (result.success) {
-      console.log('STK push successful, creating payment record');
+      console.log('STK push successful, checking if farmer exists');
       try {
+        let existingFarmerId = farmerId;
+        
+        // Check if we have a National ID and no farmerId
+        if (nationalId && !farmerId) {
+          // Try to find farmer by National ID
+          const existingFarmer = await mongoose.model('Farmer').findOne({ nationalId });
+          
+          if (existingFarmer) {
+            // Use existing farmer's ID
+            existingFarmerId = existingFarmer._id;
+            console.log('Found existing farmer with National ID:', nationalId);
+          } else if (nationalId && name && phoneNumber) {
+            // Create a new farmer record since this National ID doesn't exist
+            console.log('Creating new farmer with National ID:', nationalId);
+            const newFarmer = await mongoose.model('Farmer').create({
+              name,
+              nationalId,
+              mobileNumber: phoneNumber,
+              gender: gender || 'Male', // Default to Male if not provided
+              county: county || '',
+              ward: ward || '',
+              crop: crop || 'Maize',
+              acres: acres || 1,
+              premium: amount,
+              createdAt: new Date()
+            });
+            
+            existingFarmerId = newFarmer._id;
+            console.log('Created new farmer with ID:', existingFarmerId);
+          }
+        }
+        
         // Create a pending payment record
         const paymentData = {
           amount,
@@ -41,9 +85,9 @@ router.post('/stk-push', async (req: Request, res: Response) => {
           status: 'pending'
         } as any; // Type assertion because we'll conditionally add farmerId
         
-        // If farmerId is provided, use it
-        if (farmerId) {
-          paymentData.farmerId = farmerId;
+        // If we have a farmerId (either provided or newly created), use it
+        if (existingFarmerId) {
+          paymentData.farmerId = existingFarmerId;
         } else {
           // Create a temporary ObjectId for farmerId to satisfy schema requirement
           paymentData.farmerId = new mongoose.Types.ObjectId();

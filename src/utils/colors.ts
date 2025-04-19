@@ -4,52 +4,46 @@
  */
 export const Colors = {
   // Primary colors
-  primary: {
-    main: '#2E7D32', // Green 800
-    light: '#4CAF50', // Green 500
-    dark: '#1B5E20', // Green 900
-    contrastText: '#FFFFFF',
-  },
+  primary: '#2E7D32', // Green 800
   
   // Secondary colors
-  secondary: {
-    main: '#FFC107', // Amber 500
-    light: '#FFD54F', // Amber 300
-    dark: '#FFA000', // Amber 700
-    contrastText: '#000000',
+  secondary: '#FFC107', // Amber 500
+  
+  // Text colors
+  text: '#212121', // Gray 900
+  textLight: '#757575', // Gray 600
+  
+  // Background colors
+  background: '#F5F5F5', // Gray 100
+  paper: '#FFFFFF',
+  
+  // UI colors
+  white: '#FFFFFF',
+  black: '#000000',
+  lightGray: '#EEEEEE',
+  disabled: '#BDBDBD',
+  hint: '#9E9E9E',
+  
+  // Status colors
+  status: {
+    error: '#D32F2F', // Red 700
+    warning: '#FFA000', // Amber 700
+    info: '#1976D2', // Blue 700
+    success: '#388E3C', // Green 700
   },
   
-  // Error colors
-  error: {
-    main: '#D32F2F', // Red 700
-    light: '#EF5350', // Red 400
-    dark: '#B71C1C', // Red 900
-    contrastText: '#FFFFFF',
+  // Action colors
+  action: {
+    active: '#212121', // Gray 900
+    hover: 'rgba(0, 0, 0, 0.04)',
+    selected: 'rgba(0, 0, 0, 0.08)',
+    disabled: 'rgba(0, 0, 0, 0.26)',
+    disabledBackground: 'rgba(0, 0, 0, 0.12)',
+    focus: 'rgba(0, 0, 0, 0.12)',
   },
   
-  // Warning colors
-  warning: {
-    main: '#FF9800', // Orange 500
-    light: '#FFB74D', // Orange 300
-    dark: '#E65100', // Orange 900
-    contrastText: '#000000',
-  },
-  
-  // Info colors
-  info: {
-    main: '#2196F3', // Blue 500
-    light: '#64B5F6', // Blue 300
-    dark: '#0D47A1', // Blue 900
-    contrastText: '#FFFFFF',
-  },
-  
-  // Success colors
-  success: {
-    main: '#4CAF50', // Green 500
-    light: '#81C784', // Green 300
-    dark: '#2E7D32', // Green 800
-    contrastText: '#FFFFFF',
-  },
+  // Divider
+  divider: 'rgba(0, 0, 0, 0.12)',
   
   // Grey colors
   grey: {
@@ -64,53 +58,27 @@ export const Colors = {
     800: '#424242',
     900: '#212121',
   },
-  
-  // Text colors
-  text: {
-    primary: '#212121', // Grey 900
-    secondary: '#757575', // Grey 600
-    disabled: '#9E9E9E', // Grey 500
-    hint: '#9E9E9E', // Grey 500
-  },
-  
-  // Background colors
-  background: {
-    default: '#FAFAFA', // Grey 50
-    paper: '#FFFFFF',
-    disabled: '#F5F5F5', // Grey 100
-  },
-  
-  // Action colors
-  action: {
-    active: 'rgba(0, 0, 0, 0.54)',
-    hover: 'rgba(0, 0, 0, 0.04)',
-    selected: 'rgba(0, 0, 0, 0.08)',
-    disabled: 'rgba(0, 0, 0, 0.26)',
-    disabledBackground: 'rgba(0, 0, 0, 0.12)',
-  },
 };
 
 /**
  * Simplified color palette for direct use in components
  */
 export const colors = {
-  primary: Colors.primary.main,
-  primaryLight: Colors.primary.light,
-  primaryDark: Colors.primary.dark,
-  secondary: Colors.secondary.main,
-  secondaryLight: Colors.secondary.light,
-  secondaryDark: Colors.secondary.dark,
-  error: Colors.error.main,
-  warning: Colors.warning.main,
-  info: Colors.info.main,
-  success: Colors.success.main,
-  text: Colors.text.primary,
-  textSecondary: Colors.text.secondary,
-  textDisabled: Colors.text.disabled,
-  background: Colors.background.default,
-  paper: Colors.background.paper,
-  white: '#FFFFFF',
-  black: '#000000',
+  primary: Colors.primary,
+  primaryLight: Colors.grey[300],
+  primaryDark: Colors.grey[800],
+  secondary: Colors.secondary,
+  secondaryLight: Colors.grey[300],
+  secondaryDark: Colors.grey[800],
+  error: Colors.status.error,
+  warning: Colors.status.warning,
+  info: Colors.status.info,
+  success: Colors.status.success,
+  text: Colors.text,
+  textSecondary: Colors.textLight,
+  textDisabled: Colors.disabled,
+  background: Colors.background,
+  paper: Colors.paper,
   lightGrey: Colors.grey[300],
   darkGrey: Colors.grey[700],
   lightPrimary: 'rgba(46, 125, 50, 0.1)', // Light version of primary for backgrounds
